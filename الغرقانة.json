@@ -1,0 +1,139 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        200,
+        20
+      ],
+      "id": "08d72aef-0249-42d6-90a5-c87a8d96c24c",
+      "name": "Telegram Trigger",
+      "webhookId": "c726f645-8751-4c0b-a09b-4ec132e2c34e",
+      "credentials": {
+        "telegramApi": {
+          "id": "VykCUmFIvIZYiL2S",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a helpful and friendly chatbot. Reply with a relevant, natural, and human-like response to the following message. Avoid using special characters or emojis. Here is the message: {{ $json.message.text }}\n",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=wellcome back"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        440,
+        0
+      ],
+      "id": "16ddfd58-d102-436d-b8cb-753feafcf3a2",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        540,
+        180
+      ],
+      "id": "57c75111-d404-4fda-a81b-3bfb02bdcf7c",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "6VVecUgGXxrWxYie",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.text }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        900,
+        20
+      ],
+      "id": "e940b873-b0e7-4b9b-b800-ac6e001513f8",
+      "name": "Telegram",
+      "webhookId": "69d3ff83-cde6-4b71-b38e-a5c81d42d78a",
+      "credentials": {
+        "telegramApi": {
+          "id": "VykCUmFIvIZYiL2S",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "615bb094-eb0f-4a30-9c5a-4f32f6975bd2",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "38baad0c5452c024e67aeb2acef0c4885b554f20e381fc36bb3e3f0294913b34"
+  },
+  "id": "sa6A6TkSMVU6Yr41",
+  "tags": []
+}
